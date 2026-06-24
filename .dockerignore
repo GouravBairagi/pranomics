@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.fastq
+*.bam
+*.sra
+DEG/
+logs/
+report/
+.git/

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="pranomics",
     version="1.0.0",
-    packages=find_packages(),
+    packages=find_packages(include=["pranomics", "pranomics.*"]),
     include_package_data=True,
     install_requires=[
         "pandas",

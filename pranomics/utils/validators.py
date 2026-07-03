@@ -225,6 +225,12 @@ def validate_environment():
 
     tool_status, missing_tools = check_tools()
 
+     # safety filter (prevents installer crash)
+    missing_tools = [
+    t for t in missing_tools
+    if t not in ("python_version", "python", "pip")
+]
+
     missing_r = check_r_packages()
 
     status = (

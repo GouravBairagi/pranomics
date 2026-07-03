@@ -3,7 +3,7 @@ import subprocess
 from pathlib import Path
 
 from pranomics.modules.fastq import find_fastq_pair
-from pranomics.utils.auto_installer import install_tool
+from pranomics.utils.tool_manager import install_tool
 
 
 def run_trimming(sample, samples_dir="data", threads=4):

@@ -10,10 +10,10 @@ def generate_final_report():
     out_file = "DEG/final_report.txt"
 
     if os.path.exists(out_file):
-        print("✓ arrey tension not file bani hui hai ")
+        print("✓ Final report already exists.")
         return
 
-    print("\n📄 bs ab rahat ki sans lo ban hi gyi report smjho")
+    print("\n📄 REPORT is being prepared")
 
     df = pd.read_csv(input_file, index_col=0)
     df["FDR"] = df["FDR"].fillna(1)
@@ -50,5 +50,5 @@ def generate_final_report():
             f.write("Differential expression detected between conditions.\n")
             f.write("Further pathway analysis recommended.\n")
 
-    print("✅ Lo nipat gya kaam bngyi report")
+    print("✅ Final report generated successfully.")
     

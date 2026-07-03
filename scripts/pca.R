@@ -13,7 +13,9 @@ out_file   <- args[3]
 counts <- read.csv(count_file, row.names = 1, check.names = FALSE)
 meta <- read.csv(meta_file)
 
-# Ensure sample match
+# -----------------------------
+# Match samples
+# -----------------------------
 common <- intersect(colnames(counts), meta$sample)
 
 if (length(common) < 2) {
@@ -22,6 +24,21 @@ if (length(common) < 2) {
 
 counts <- counts[, common]
 meta <- meta[match(common, meta$sample), ]
+
+# -----------------------------
+# Detect grouping column safely
+# -----------------------------
+group_col <- NULL
+
+if ("group" %in% colnames(meta)) {
+  group_col <- meta$group
+} else if ("condition" %in% colnames(meta)) {
+  group_col <- meta$condition
+} else if ("treatment" %in% colnames(meta)) {
+  group_col <- meta$treatment
+} else {
+  stop("No valid grouping column found (expected: group/condition/treatment)")
+}
 
 # -----------------------------
 # Normalize
@@ -38,7 +55,7 @@ pca <- prcomp(t(logCPM))
 df <- data.frame(
   PC1 = pca$x[,1],
   PC2 = pca$x[,2],
-  group = meta$group
+  group = group_col
 )
 
 png(out_file, width = 1200, height = 900)
@@ -49,3 +66,4 @@ ggplot(df, aes(PC1, PC2, color = group)) +
   ggtitle("PCA Plot")
 
 dev.off()
+

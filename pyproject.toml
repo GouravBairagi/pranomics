@@ -2,10 +2,55 @@
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-include = ["pranomics*"]
-
 [project]
 name = "pranomics"
-version = "1.0.0"
+version = "0.1.3"
+description = "Automated RNA-seq analysis pipeline from SRA to differential expression and interactive reporting."
+readme = "README.md"
 requires-python = ">=3.10"
+
+authors = [
+    { name = "Gourav Bairagi" }
+]
+
+license = { text = "MIT" }
+
+keywords = [
+    "RNA-seq",
+    "NGS",
+    "bioinformatics",
+    "transcriptomics",
+    "edgeR",
+    "bowtie2",
+    "fastqc",
+    "stringtie"
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: POSIX :: Linux",
+    "License :: OSI Approved :: MIT License"
+]
+
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "plotly>=5.0",
+    "rich>=13.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/your-username/pranomics"
+Issues = "https://github.com/your-username/pranomics/issues"
+
+[project.scripts]
+pranomics = "pranomics.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["pranomics*"]

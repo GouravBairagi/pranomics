@@ -1,12 +1,11 @@
 import shutil
 import subprocess
 import time
-import os
+from pranomics.utils.conda_bootstrap import ensure_conda
 
-
-# -----------------------------
+# =====================================================
 # TOOL REGISTRY (SOURCE OF TRUTH)
-# -----------------------------
+# =====================================================
 TOOL_REGISTRY = {
     "fastq-dump": {"type": "conda", "pkg": "sra-tools"},
     "fastqc": {"type": "conda", "pkg": "fastqc"},
@@ -20,41 +19,42 @@ TOOL_REGISTRY = {
 }
 
 
-# -----------------------------
+# =====================================================
 # CHECK TOOL
-# -----------------------------
+# =====================================================
 def is_tool_available(tool: str) -> bool:
     return shutil.which(tool) is not None
 
 
-# -----------------------------
-# CONDA CHECK
-# -----------------------------
 def conda_available():
     return shutil.which("conda") is not None
 
 
-# -----------------------------
-# INSTALL HELPERS
-# -----------------------------
+# =====================================================
+# INSTALL DISPATCHERS
+# =====================================================
 def install_conda(pkg):
-    if not conda_available():
-        raise RuntimeError("Conda not found in PATH")
 
-    cmd = [
-        "conda",
-        "install",
-        "-y",
-        "-c", "bioconda",
-        "-c", "conda-forge",
-        pkg,
-    ]
-    subprocess.run(cmd, check=True)
+    conda = ensure_conda()
+
+    subprocess.run(
+        [
+            conda,
+            "install",
+            "-y",
+            "-c",
+            "bioconda",
+            "-c",
+            "conda-forge",
+            pkg,
+        ],
+        check=True,
+    )
+    
 
 
 def install_apt(pkg):
-    cmd = ["sudo", "apt", "install", "-y", pkg]
-    subprocess.run(cmd, check=True)
+    subprocess.run(["sudo", "apt", "install", "-y", pkg], check=True)
 
 
 def install_r(pkg):
@@ -67,33 +67,42 @@ def install_r(pkg):
     subprocess.run(["Rscript", "-e", r_cmd], check=True)
 
 
-# -----------------------------
-# SINGLE INSTALL FUNCTION
-# -----------------------------
+# =====================================================
+# SINGLE TOOL INSTALL
+# =====================================================
 def install_tool(tool: str, retries=2):
 
+    # clean bypass list (IMPORTANT FIX)
+    NON_INSTALLABLE = {
+        "python_version",
+        "python",
+        "pip",
+    }
+
+    if tool in NON_INSTALLABLE:
+        print(f"✔ Skipping system check: {tool}")
+        return True
+
     if tool not in TOOL_REGISTRY:
-        raise ValueError(f"Tool not registered: {tool}")
+        print(f"⚠ Unknown tool: {tool} (skipping)")
+        return False
 
     meta = TOOL_REGISTRY[tool]
     ttype = meta["type"]
     pkg = meta["pkg"]
 
-    print(f"\n🔧 Installing {tool} ({pkg}) via {ttype}")
+    print(f"\n🔧 Installing {tool} → {pkg} ({ttype})")
 
     for attempt in range(1, retries + 1):
         try:
             if ttype == "conda":
                 install_conda(pkg)
-
             elif ttype == "apt":
                 install_apt(pkg)
-
             elif ttype == "r":
                 install_r(pkg)
-
             else:
-                raise ValueError(f"Unknown type: {ttype}")
+                raise ValueError(f"Unknown install type: {ttype}")
 
             if is_tool_available(tool):
                 print(f"✔ Installed: {tool}")
@@ -107,10 +116,13 @@ def install_tool(tool: str, retries=2):
     return False
 
 
-# -----------------------------
+# =====================================================
 # INSTALL MISSING TOOLS
-# -----------------------------
-def install_missing(tools: list):
+# =====================================================
+def install_missing(report: dict):
+
+    tools = report.get("missing_tools", [])
+
     print("\n==============================")
     print("🚀 TOOL MANAGER INSTALL START")
     print("==============================")
@@ -130,3 +142,4 @@ def install_missing(tools: list):
         print("❌ Failed tools:", failed)
 
     return failed
+    

@@ -1,29 +1,38 @@
 import subprocess
 from pathlib import Path
-from pranomics.utils.paths import PROJECT_ROOT, SCRIPTS_DIR, DEG_DIR
+
+from pranomics.utils.paths import Paths
 
 
-def run_heatmap(counts="counts/gene_count_matrix.csv", metadata="metadata.csv"):
+def run_heatmap(
+    counts="counts/gene_count_matrix.csv",
+    metadata="metadata/metadata.csv",
+    base_dir=None
+):
 
-    DEG_DIR.mkdir(exist_ok=True)
+    paths = Paths(base_dir)
 
-    out = DEG_DIR / "heatmap.png"
+    out = paths.deg / "heatmap.png"
 
     if out.exists():
         print("✓ Heatmap already exists")
         return str(out)
 
-    script = SCRIPTS_DIR / "heatmap.R"
+    script = paths.base / "scripts" / "heatmap.R"
+
+    # ensure output directory exists
+    paths.deg.mkdir(parents=True, exist_ok=True)
 
     cmd = [
         "Rscript",
         str(script),
-        str(PROJECT_ROOT / counts),
-        str(PROJECT_ROOT / metadata),
+        str(paths.base / counts),
+        str(paths.base / metadata),
         str(out),
     ]
 
     print("🧊 Running Heatmap...")
+
     subprocess.run(cmd, check=True)
 
     return str(out)

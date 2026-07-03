@@ -1,3 +1,6 @@
+recursive-include pranomics *.py
+recursive-include pranomics/modules *.py
+recursive-include pranomics/utils *.py
 recursive-include scripts *.R
 include README.md
-
+include LICENSE

@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Large bioinformatics outputs
+fastq/
+bam/
+alignments/
+trimmed/
+DEG/
+counts/
+fastqc/
+sorted_bam/
+stringtie/
+logs/
+reference/index/
+
+# temp files
+*.tmp
+*.log
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.pyc
+.env

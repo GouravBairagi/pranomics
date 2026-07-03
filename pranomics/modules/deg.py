@@ -13,10 +13,10 @@ def generate_deg_tables():
     down_file = "DEG/downregulated.csv"
 
     if os.path.exists(up_file) and os.path.exists(down_file):
-        print("✓ DEG tables pehle se bne hain")
+        print("✓ DEG tables are already generated.")
         return
 
-    print("\n📊 DEG tables ka kaam chalu hai")
+    print("\n📊 DEG tables are being generated.")
 
     df = pd.read_csv(input_file, index_col=0)
 
@@ -32,5 +32,5 @@ def generate_deg_tables():
     up.to_csv(up_file)
     down.to_csv(down_file)
 
-    print(f"✅ yeh saare upregulated hain: {len(up)}")
-    print(f"✅ yeh saare down regulated hain: {len(down)}")
+    print(f"✅ Upregulated genes identified: {len(up)}")
+    print(f"✅ Downregulated genes identified: {len(down)}")
